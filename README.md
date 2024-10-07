@@ -20,4 +20,4 @@ usage
 
 ```
   
-credits to [shadow](https://discord.com/users/1116705678745141339) for the command
+changes made by me discord id - craterx1
