@@ -16,6 +16,7 @@ usage
    port add <port>
    port remove <port>
    port refresh <port>
+   port add <port> <port> 
 
 ```
   
