@@ -72,33 +72,24 @@ list_ports() {
     done < $PORTS_FILE
 }
 
-# Parsing the custom command structure
+# Parsing the custom command structure directly
 case "$1" in
-    port)
+    add)
         shift
-        case "$1" in
-            add)
-                shift
-                add_port "$@"
-                ;;
-            remove)
-                shift
-                remove_port "$1"
-                ;;
-            refresh)
-                refresh_ports
-                ;;
-            list)
-                list_ports
-                ;;
-            *)
-                echo "Usage: $0 port {add|remove|refresh|list} [ports...]"
-                exit 1
-                ;;
-        esac
+        add_port "$@"
+        ;;
+    remove)
+        shift
+        remove_port "$1"
+        ;;
+    refresh)
+        refresh_ports
+        ;;
+    list)
+        list_ports
         ;;
     *)
-        echo "Usage: $0 port {add|remove|refresh|list} [ports...]"
+        echo "Usage: $0 {add|remove|refresh|list} [ports...]"
         exit 1
         ;;
 esac
