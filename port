@@ -3,21 +3,22 @@
 PORTS_FILE="/ports.info.txt"
 
 add_port() {
-    local local_port=$1
-    if [[ -z "$local_port" ]]; then
-        echo "Please provide a local port to forward."
+    if [[ -z "$1" ]]; then
+        echo "Please provide at least one local port to forward."
         exit 1
     fi
 
-    local random_port
-    random_port=$(shuf -i 1024-65535 -n 1)
+    for local_port in "$@"; do
+        local random_port
+        random_port=$(shuf -i 1024-65535 -n 1)
 
-    ssh -o StrictHostKeyChecking=no -f -N -R ${random_port}:localhost:${local_port} serveo.net > /dev/null &
-    ssh_pid=$!
+        ssh -o StrictHostKeyChecking=no -f -N -R ${random_port}:localhost:${local_port} serveo.net > /dev/null &
+        ssh_pid=$!
 
-    echo "${random_port}:${local_port}" >> $PORTS_FILE
+        echo "${random_port}:${local_port}" >> $PORTS_FILE
 
-    echo "${local_port} is now on 138.68.79.95:${random_port}"
+        echo "${local_port} is now on 138.68.79.95:${random_port}"
+    done
 }
 
 remove_port() {
@@ -71,21 +72,34 @@ list_ports() {
     done < $PORTS_FILE
 }
 
+# Parsing the custom command structure
 case "$1" in
-    add)
-        add_port "$2"
-        ;;
-    remove)
-        remove_port "$2"
-        ;;
-    refresh)
-        refresh_ports
-        ;;
-    list)
-        list_ports
+    port)
+        shift
+        case "$1" in
+            add)
+                shift
+                add_port "$@"
+                ;;
+            remove)
+                shift
+                remove_port "$1"
+                ;;
+            refresh)
+                refresh_ports
+                ;;
+            list)
+                list_ports
+                ;;
+            *)
+                echo "Usage: $0 port {add|remove|refresh|list} [ports...]"
+                exit 1
+                ;;
+        esac
         ;;
     *)
-        echo "Usage: $0 {add|remove|refresh|list} [port]"
+        echo "Usage: $0 port {add|remove|refresh|list} [ports...]"
         exit 1
         ;;
 esac
+
